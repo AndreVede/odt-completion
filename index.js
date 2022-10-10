@@ -33,8 +33,11 @@ exports.getOdtObject = function (odtFile) {
         fsPromises.rename(odtFile, odtZip);
 
         //lecture de content.xml
-        zip.file('content.xml').async("string").then(function (data) {
-            return new Odt(data);
+        var zip = new jszip();
+        zip.loadAsync(odtZip).then(function(zip) {
+            zip.file('content.xml').async("string").then(function (data) {
+                return new Odt(data);
+            });
         });
     } catch (err) {
         console.error(err);
