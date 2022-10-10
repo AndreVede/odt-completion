@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/AndreVede/odt-completion/issues"
   },
-  "homepage": "https://github.com/AndreVede/odt-completion#readme"
+  "homepage": "https://github.com/AndreVede/odt-completion#readme",
+  "dependencies": {
+    "jszip": "^3.10.1"
+  }
 }
