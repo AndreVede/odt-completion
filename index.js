@@ -4,6 +4,8 @@ var fs = require('fs');
 var fsPromises = require('fs').promises;
 
 var jszip = require('jszip');
+
+var odtZipUtils = require('./libs/odt-zip-utils');
 class Odt {
     template;
     odtFile;
@@ -15,30 +17,17 @@ class Odt {
             //passage de odt à zip
             var odtZip = odtFile.substring(0, odtFile.length - 4);
             odtZip = odtZip + '.zip';
-                    
+            // renommer le fichier odt en zip
             fsPromises.rename(odtFile, odtZip);
-
             this.odtZip = odtZip; //odtZip est l'odt en format zip
             this.odtFile = odtFile;
-
             //lecture de content.xml
-            var zip = new jszip();
-            var dataTemplate = '';
-            fs.readFile(odtZip, function (err, zipData) {
-                if (err) throw err;
-                zip.loadAsync(zipData).then(function(zip) {
-                    zip.file('content.xml').async("string").then(function (data) {
-                        this.template = data;
-                    });
-                });
-            });
-
-            this.template = dataTemplate;
-            console.log(this.template);
+            this.template = odtZipUtils.getTemplateOdtFromZip(this.odtZip);
 
         } catch (err) {
             console.error(err);
         };
+        console.log(this.template);
     };
     changeVariable = function (variableName, variable) {
         if (this.template !== null && this.template !== undefined) {
@@ -52,7 +41,6 @@ class Odt {
     };
     recreateOdtFile = function () {
         if (this.template !== null && this.template !== undefined) {
-            var file = new ArrayBuffer();
             try {
                 var zip = new jszip();
                 var outZip = new jszip();
@@ -61,7 +49,7 @@ class Odt {
                     zip.loadAsync(zipData).then(function(zip) {
                         outZip = zip;
                         outZip.remove('content.xml');
-                        outZip.file('content.xml', this.template);
+                        outZip.file('content.xml', this.template); //pas le même this
                         outZip.generateNodeStream({type:'nodebuffer',streamFiles:true})
                         .pipe(fs.createWriteStream(this.odtZip))
                         .on('finish', function () {
