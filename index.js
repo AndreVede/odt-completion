@@ -33,7 +33,7 @@ class Odt {
             // recherche de l'emplacement de la variable dans le content.xml, variable stockée comme ça : {{variable}}
             // regex the name
             var variableNameRegex = new RegExp('{{' + variableName + '}}', 'g');
-            this.template.replace(variableNameRegex, variable);
+            this.template = this.template.replace(variableNameRegex, variable);
         } else {
             console.error("Il n'y a pas de template dans votre objet");
         };
