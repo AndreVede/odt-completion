@@ -21,13 +21,12 @@ class Odt {
             fsPromises.rename(odtFile, odtZip);
             this.odtZip = odtZip; //odtZip est l'odt en format zip
             this.odtFile = odtFile;
-            //lecture de content.xml
-            this.template = odtZipUtils.getTemplateOdtFromZip(this.odtZip);
-
+            odtZipUtils.setTemplate(this).then(function() {
+                console.log('Template mis à jour');
+            });
         } catch (err) {
             console.error(err);
         };
-        console.log(this.template);
     };
     changeVariable = function (variableName, variable) {
         if (this.template !== null && this.template !== undefined) {
