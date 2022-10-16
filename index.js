@@ -40,25 +40,8 @@ class Odt {
     };
     recreateOdtFile = function () {
         if (this.template !== null && this.template !== undefined) {
-            try {
-                var zip = new jszip();
-                var outZip = new jszip();
-                fs.readFile(this.odtZip, function (err, zipData) {
-                    if (err) throw err;
-                    zip.loadAsync(zipData).then(function(zip) {
-                        outZip = zip;
-                        outZip.remove('content.xml');
-                        outZip.file('content.xml', this.template); //pas le même this
-                        outZip.generateNodeStream({type:'nodebuffer',streamFiles:true})
-                        .pipe(fs.createWriteStream(this.odtZip))
-                        .on('finish', function () {
-                            // JSZip generates a readable stream with a "end" event,
-                            // but is piped here in a writable stream which emits a "finish" event.
-                            console.log(this.odtZip+" written");
-                        });
-                        fsPromises.rename(this.odtZip, this.odtFile);
-                    });
-                });         
+            try {                
+                odtZipUtils.writeOdtZip(this);      
             } catch (err) {console.error(err);};
         } else {
             console.error('Il faut d\'abord créer un template');
